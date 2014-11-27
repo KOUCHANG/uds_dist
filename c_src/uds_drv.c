@@ -61,13 +61,13 @@ static void debugf(char *str, ...)
 
 
 #ifdef DEBUG
-#define ASSERT(X) 							\
-    do {									\
-        if (!(X)) {								\
+#define ASSERT(X) \
+    do { \
+        if (!(X)) { \
             fprintf(stderr,"Assertion (%s) failed at line %d file %s\r\n", #X, \
-                    __LINE__, __FILE__); 					\
-            exit(1);							\
-        } 									\
+                    __LINE__, __FILE__); \
+            exit(1); \
+        } \
     } while(0)
 #define ASSERT_NONBLOCK(FD) ASSERT(fcntl((FD), F_GETFL, 0) & O_NONBLOCK)
 #else
@@ -77,8 +77,8 @@ static void debugf(char *str, ...)
 
 
 
-#define SET_NONBLOCKING(FD)			\
-    fcntl((FD), F_SETFL, 			\
+#define SET_NONBLOCKING(FD) \
+    fcntl((FD), F_SETFL, \
             fcntl((FD), F_GETFL, 0) | O_NONBLOCK)
 
 #define ALLOC(X) my_malloc(X)
@@ -189,7 +189,7 @@ static void do_unlink(char *name);
 
 /* The driver entry */
 ErlDrvEntry uds_driver_entry = {
-    NULL,		   /* init, N/A */
+    NULL,                  /* init, N/A */
     uds_start,             /* start, called when port is opened */
     uds_stop,              /* stop, called when port is closed */
     uds_command,           /* output, called when erlang has sent */
@@ -210,7 +210,7 @@ ErlDrvEntry uds_driver_entry = {
     ERL_DRV_EXTENDED_MARKER,
     ERL_DRV_EXTENDED_MAJOR_VERSION,
     ERL_DRV_EXTENDED_MINOR_VERSION,
-    0,	/* ERL_DRV_FLAGs */
+    0,                     /* ERL_DRV_FLAGs */
     NULL,
     NULL,                  /* process_exit */
     uds_stop_select
@@ -414,11 +414,11 @@ static int uds_control(ErlDrvData handle, unsigned int command,
         char* buf, int count, char** res, int res_size)
 {
     /* Local macro to ensure large enough buffer. */
-#define ENSURE(N) 				\
-    do {						\
-        if (res_size < N) {			\
-            *res = ALLOC(N);			\
-        }					\
+#define ENSURE(N) \
+    do { \
+        if (res_size < N) { \
+            *res = ALLOC(N); \
+        } \
     } while(0)
 
     UdsData *ud = (UdsData *) handle;
@@ -945,7 +945,7 @@ static int get_packet_length(char *b)
 }
 
 static void put_packet_length(char *b, int len)
-{	
+{
     Byte *p = (Byte *) b;
     Word n = (Word) len;
     p[0] = (n >> 24) & 0xFF;
