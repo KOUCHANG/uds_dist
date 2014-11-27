@@ -1,7 +1,7 @@
 %%%----------------------------------------------------------------------
 %%% File    : uds_server.erl
 %%% Purpose : Holder for the uds_drv ddll driver.
-%%% Created : 15 Mar 2000 
+%%% Created : 15 Mar 2000
 %%%----------------------------------------------------------------------
 
 -module(uds_server).
@@ -36,12 +36,12 @@ start_link() ->
 init([]) ->
     process_flag(trap_exit,true),
     case load_driver() of
-	ok ->
-	    {ok, []};
-	{error, already_loaded} ->
-	    {ok, []};
-	Error ->
-	    exit(Error)
+        ok ->
+            {ok, []};
+        {error, already_loaded} ->
+            {ok, []};
+        Error ->
+            exit(Error)
     end.
 
 
@@ -105,52 +105,52 @@ load_driver() ->
     erl_ddll:load_driver(Dir,?DRIVER_NAME).
 
 %%
-%% As this server may be started by the distribution, it is not safe to assume 
+%% As this server may be started by the distribution, it is not safe to assume
 %% a working code server, neither a working file server.
 %% I try to utilize the most primitive interfaces available to determine
 %% the directory of the port_program.
 %%
 find_priv_lib() ->
     PrivDir = case (catch code:priv_dir(uds_dist)) of
-		  {'EXIT', _} ->
-		      %% Code server probably not startet yet
-		      {ok, P} = erl_prim_loader:get_path(),
-		      ModuleFile = atom_to_list(?MODULE) ++ extension(),
-		      Pd = (catch lists:foldl
-			    (fun(X,Acc) ->
-				     M = filename:join([X, ModuleFile]),
-				     %% The file server probably not started
-				     %% either, has to use raw interface.
-				     case file:raw_read_file_info(M) of 
-					 {ok,_} -> 
-					     %% Found our own module in the
-					     %% path, lets bail out with
-					     %% the priv_dir of this directory
-					     Y = filename:split(X),
-					     throw(filename:join
-						   (lists:sublist
-						    (Y,length(Y) - 1) 
-						    ++ ["priv"])); 
-					 _ -> 
-					     Acc 
-				     end 
-			     end,
-			     false,P)),
-		      case Pd of
-			  false ->
-			      exit(uds_dist_priv_lib_indeterminate);
-			  _ ->
-			      Pd
-		      end;
-		  Dir ->
-		      Dir
-	      end,
+                  {'EXIT', _} ->
+                      %% Code server probably not startet yet
+                      {ok, P} = erl_prim_loader:get_path(),
+                      ModuleFile = atom_to_list(?MODULE) ++ extension(),
+                      Pd = (catch lists:foldl
+                            (fun(X,Acc) ->
+                                     M = filename:join([X, ModuleFile]),
+                                     %% The file server probably not started
+                                     %% either, has to use raw interface.
+                                     case file:raw_read_file_info(M) of
+                                         {ok,_} ->
+                                             %% Found our own module in the
+                                             %% path, lets bail out with
+                                             %% the priv_dir of this directory
+                                             Y = filename:split(X),
+                                             throw(filename:join
+                                                   (lists:sublist
+                                                    (Y,length(Y) - 1)
+                                                    ++ ["priv"]));
+                                         _ ->
+                                             Acc
+                                     end
+                             end,
+                             false,P)),
+                      case Pd of
+                          false ->
+                              exit(uds_dist_priv_lib_indeterminate);
+                          _ ->
+                              Pd
+                      end;
+                  Dir ->
+                      Dir
+              end,
     filename:join([PrivDir, "lib"]).
 
 extension() ->
     %% erlang:info(machine) returns machine name as text in all uppercase
     "." ++ lists:map(fun(X) ->
-			     X + $a - $A
-		     end,
-		     erlang:info(machine)).
+                             X + $a - $A
+                     end,
+                     erlang:info(machine)).
 
